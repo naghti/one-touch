@@ -199,11 +199,11 @@ function getImageUrl(imageName: string): string {
 .page-main {
     .hero {
         min-height: 540px;
-        background: url('src/assets/hero.jpg') no-repeat 55% 50%;
+        background: url('@/assets/hero.jpg') no-repeat 55% 50%;
         background-size: cover;
 
         @media (min-width: 768px) {
-            background: url('src/assets/hero.jpg') no-repeat 55% top;
+            background: url('@/assets/hero.jpg') no-repeat 55% top;
             background-size: cover;
         }
 

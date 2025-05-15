@@ -84,6 +84,17 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('resize', onResize);
 });
+
+const images: Record<string, string>  = import.meta.glob('/src/assets/books/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+});
+
+function getImageUrl(imageName: string): string {
+  const path = `/src/assets/books/${imageName}`;
+  return images[path] || ''; 
+}
+
 </script>
 
 <template>
@@ -106,7 +117,7 @@ onUnmounted(() => {
                     <div v-for="(book, index) in booksData" :key="index" class="new__card-item">
                         <img
                             class="new__card-image"
-                            :src="'/src/assets/books/' + book.imageName"
+                            :src="getImageUrl(book.imageName as string)"
                             alt="Обложка книги."
                         />
 

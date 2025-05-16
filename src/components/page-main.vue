@@ -5,63 +5,40 @@ import { useAppStore } from '../store/app-store.ts';
 import { storeToRefs } from 'pinia';
 import { onMounted, onUnmounted, ref } from 'vue';
 import NewsletterBlock from './newsletter-block.vue';
-import type { IBook } from '../models/IBook.ts';
+import type { IBook } from "@/models/IBook.ts";
 
 const appStore = useAppStore();
-
 const { booksData } = storeToRefs(appStore);
-
-// Ссылка на HTML элемент списка карточек (слайдера)
 const cardList = ref();
-
-// Текущий отступ между слайдами (в px)
 const currentListGap = ref(5);
-
-// Текущее смещение списка карточек по оси X (в px)
 const currentListOffsetX = ref(0);
-
-// Индекс активного слайда
 const currentSlide = ref(0);
-
-// Количество отображаемых карточек на одном слайде
 const cardsInSlide = ref(1);
 
-// Обрабатывает смену слайда по нажатию на кнопки управления
 const onClickCardListControl = (direction: number) => {
-    // Расчет индекса следующего слайда
     const nextSlide = currentSlide.value + direction;
 
-    // Прерывание, если следующий слайд выходит за допустимые пределы
     if (nextSlide < 0 || nextSlide >= booksData.value.length / cardsInSlide.value) {
         return;
     }
 
-    // Обновление активного слайда
     currentSlide.value += direction;
-
-    // Обновление смещения списка карточек
     currentListOffsetX.value += (cardList.value.offsetWidth + currentListGap.value) * -direction;
 };
 
-// Обрабатывает смену слайда по клику на элемент пагинации
 const onClickSliderPagination = (index: number) => {
-    // Обновление активного слайда
     currentSlide.value = index;
 
-    // Обновление смещения списка карточек
     currentListOffsetX.value = (cardList.value.offsetWidth + currentListGap.value) * -index;
 };
 
-// Адаптирует количество карточек и отступы при изменении ширины окна
 const onResize = () => {
     const deviceWidth = window.innerWidth;
 
-    // Настройки для больших экранов (>= 1440px)
     if (deviceWidth >= 1440) {
         currentListGap.value = 20;
         cardsInSlide.value = 3;
     }
-    // Добавьте здесь другие условия для иных разрешений, если необходимо
 };
 
 const onBuyItem = (item: IBook) => {
@@ -70,12 +47,12 @@ const onBuyItem = (item: IBook) => {
 };
 
 onMounted(() => {
-    onResize(); // Первоначальная настройка при монтировании
-    window.addEventListener('resize', onResize); // Отслеживание изменений размера окна
+    onResize();
+    window.addEventListener('resize', onResize);
 });
 
 onUnmounted(() => {
-    window.removeEventListener('resize', onResize); // Удаление слушателя при размонтировании
+    window.removeEventListener('resize', onResize);
 });
 
 // Динамический импорт изображений книг из указанной директории

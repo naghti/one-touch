@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-// Инпут для ввода пользователем своего email
 const userInputEmail = ref('');
 
-// Функция выполняется при нажатии на кнопку "Отправить"
 const onClickSubmit = () => {
-    // Регулярное выражения для проверки валидности введённого email
     const regex =
         /^((([0-9A-Za-z]{1}[-0-9A-z\.]{1,}[0-9A-Za-z]{1})|([0-9А-Яа-я]{1}[-0-9А-я\.]{1,}[0-9А-Яа-я]{1}))@([-A-Za-z]{1,}\.){1,2}[-A-Za-z]{2,})$/;
 
     if (regex.test(userInputEmail.value)) {
-        console.log('Форма успешно отправлена');
+        alert('Форма успешно отправлена');
         userInputEmail.value = '';
     } else {
-        console.log('Неправильно введён email');
+        alert('Неправильно введён email');
     }
 };
 </script>

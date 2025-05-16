@@ -5,96 +5,89 @@ import { useAppStore } from '../store/app-store.ts';
 import { storeToRefs } from 'pinia';
 import { onMounted, onUnmounted, ref } from 'vue';
 import NewsletterBlock from './newsletter-block.vue';
+import type { IBook } from '../models/IBook.ts';
 
 const appStore = useAppStore();
 
 const { booksData } = storeToRefs(appStore);
 
-// Ссылка на html элемент слайдера
+// Ссылка на HTML элемент списка карточек (слайдера)
 const cardList = ref();
 
-// Текущее расстояние между слайдами
-// (необходимо для расчёта смещения при смене слайда)
+// Текущий отступ между слайдами (в px)
 const currentListGap = ref(5);
 
-// Текущее смещение слайдера
+// Текущее смещение списка карточек по оси X (в px)
 const currentListOffsetX = ref(0);
 
-// Текущий слайд
+// Индекс активного слайда
 const currentSlide = ref(0);
 
-// Количество карточек товара на одном слайде
+// Количество отображаемых карточек на одном слайде
 const cardsInSlide = ref(1);
 
-// Функция смены слайда при нажатии на кнопки вправо/влево
+// Обрабатывает смену слайда по нажатию на кнопки управления
 const onClickCardListControl = (direction: number) => {
-    // Создаётся номер следующего слайда
+    // Расчет индекса следующего слайда
     const nextSlide = currentSlide.value + direction;
 
-    // Если номер следующего слайда выходит за границы - прервать функцию
+    // Прерывание, если следующий слайд выходит за допустимые пределы
     if (nextSlide < 0 || nextSlide >= booksData.value.length / cardsInSlide.value) {
         return;
     }
 
-    // Изменение номера текущего слайда
+    // Обновление активного слайда
     currentSlide.value += direction;
 
-    // Изменение смещения слайдера
+    // Обновление смещения списка карточек
     currentListOffsetX.value += (cardList.value.offsetWidth + currentListGap.value) * -direction;
 };
 
-// Функция срабатывает при нажатии на элементы пагинации слайдера
+// Обрабатывает смену слайда по клику на элемент пагинации
 const onClickSliderPagination = (index: number) => {
-    // Изменение номера текущего слайда
+    // Обновление активного слайда
     currentSlide.value = index;
 
-    // Изменение смещения слайдера
+    // Обновление смещения списка карточек
     currentListOffsetX.value = (cardList.value.offsetWidth + currentListGap.value) * -index;
 };
 
-// Функция для события изменения ширины устройства
+// Адаптирует количество карточек и отступы при изменении ширины окна
 const onResize = () => {
     const deviceWidth = window.innerWidth;
 
+    // Настройки для больших экранов (>= 1440px)
     if (deviceWidth >= 1440) {
         currentListGap.value = 20;
         cardsInSlide.value = 3;
     }
+    // Добавьте здесь другие условия для иных разрешений, если необходимо
 };
 
-// Интерфейс для данных о книге
-interface IBook {
-    imageName?: string;
-    author?: string;
-    name?: string;
-    type?: string;
-    price?: number;
-}
-
-// Функция отправляет данные о продукте при нажатии пользователем на кнопку "Купить"
 const onBuyItem = (item: IBook) => {
+    alert("Куплено!;)")
     console.log(item);
 };
 
 onMounted(() => {
-    onResize();
-    window.addEventListener('resize', onResize);
+    onResize(); // Первоначальная настройка при монтировании
+    window.addEventListener('resize', onResize); // Отслеживание изменений размера окна
 });
 
 onUnmounted(() => {
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('resize', onResize); // Удаление слушателя при размонтировании
 });
 
+// Динамический импорт изображений книг из указанной директории
 const images: Record<string, string>  = import.meta.glob('/src/assets/books/*.{jpg,jpeg,png,webp}', {
-  eager: true,
-  import: 'default',
+    eager: true, // Загружать модули сразу
+    import: 'default', // Импортировать экспорт по умолчанию (URL изображения)
 });
 
 function getImageUrl(imageName: string): string {
-  const path = `/src/assets/books/${imageName}`;
-  return images[path] || ''; 
+    const path = `/src/assets/books/${imageName}`;
+    return images[path] || ''; // Возвращает путь или пустую строку, если изображение не найдено
 }
-
 </script>
 
 <template>
